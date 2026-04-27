@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block page_title %}Products{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-box-seam me-2 text-primary"></i>Products</h5>
+    <a href="{% url 'product_add' %}" class="btn-primary-custom btn"><i class="bi bi-plus-lg me-1"></i> Add Product</a>
+</div>
+<div class="content-card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>#</th><th>Name</th><th>Code</th><th>Category</th><th>Stock</th><th>Purchase Price</th><th>Sale Price</th><th>Profit %</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ product.name }}</strong></td>
+                    <td>{{ product.product_code|default:"-" }}</td>
+                    <td>{{ product.category|default:"-" }}</td>
+                    <td>{% if product.is_low_stock %}<span class="badge bg-danger">{{ product.stock }}</span>{% else %}<span class="badge bg-success">{{ product.stock }}</span>{% endif %} {{ product.unit_type }}</td>
+                    <td>Rs. {{ product.purchase_price }}</td>
+                    <td>Rs. {{ product.sale_price }}</td>
+                    <td><span class="badge bg-info">{{ product.profit_percentage }}%</span></td>
+                    <td>{% if product.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+                    <td>
+                        <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="10" class="text-center text-muted py-4">No products yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

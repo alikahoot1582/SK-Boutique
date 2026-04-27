@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block page_title %}Expenses{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-cash-stack me-2 text-primary"></i>Expenses</h5>
+    <div class="d-flex gap-2">
+        <a href="{% url 'expense_category_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-tags me-1"></i> Categories</a>
+        <a href="{% url 'expense_add' %}" class="btn-primary-custom btn"><i class="bi bi-plus-lg me-1"></i> Add Expense</a>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+            <i class="bi bi-cash-stack card-icon"></i>
+            <div class="label">Today Expenses</div>
+            <div class="value">Rs. {{ today_total|floatformat:2 }}</div>
+            <div class="sub">Spent Today</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card" style="background: linear-gradient(135deg, #e83e8c, #c2185b);">
+            <i class="bi bi-graph-down card-icon"></i>
+            <div class="label">Total Expenses</div>
+            <div class="value">Rs. {{ total|floatformat:2 }}</div>
+            <div class="sub">All Time</div>
+        </div>
+    </div>
+</div>
+<div class="content-card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>#</th><th>Title</th><th>Category</th><th>Amount</th><th>Date</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ expense.title }}</strong></td>
+                    <td>{% if expense.category %}<span class="badge bg-secondary">{{ expense.category.name }}</span>{% else %}-{% endif %}</td>
+                    <td><strong class="text-danger">Rs. {{ expense.amount|floatformat:2 }}</strong></td>
+                    <td>{{ expense.date|date:"d M Y" }}</td>
+                    <td>{{ expense.notes|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'expense_edit' expense.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'expense_delete' expense.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No expenses yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

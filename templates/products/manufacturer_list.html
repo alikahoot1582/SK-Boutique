@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block page_title %}Manufacturers{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-building me-2 text-primary"></i>Manufacturers</h5>
+    <a href="{% url 'manufacturer_add' %}" class="btn-primary-custom btn"><i class="bi bi-plus-lg me-1"></i> Add Manufacturer</a>
+</div>
+<div class="content-card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>#</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for man in manufacturers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ man.name }}</strong></td>
+                    <td>{{ man.created_at|date:"d M Y" }}</td>
+                    <td><a href="{% url 'manufacturer_delete' man.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No manufacturers yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

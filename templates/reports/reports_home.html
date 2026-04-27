@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-line me-2 text-primary"></i>Reports</h5>
+</div>
+<h6 class="text-muted fw-semibold mb-3">TODAY</h6>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #e83e8c, #c2185b);">
+            <i class="bi bi-cart3 card-icon"></i>
+            <div class="label">Today Revenue</div>
+            <div class="value">Rs. {{ today_revenue|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+            <i class="bi bi-graph-up card-icon"></i>
+            <div class="label">Today Profit</div>
+            <div class="value">Rs. {{ today_profit|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+            <i class="bi bi-cash-stack card-icon"></i>
+            <div class="label">Today Expenses</div>
+            <div class="value">Rs. {{ today_expense_total|floatformat:2 }}</div>
+        </div>
+    </div>
+</div>
+<h6 class="text-muted fw-semibold mb-3">THIS MONTH</h6>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+            <div class="label">Monthly Revenue</div>
+            <div class="value">Rs. {{ monthly_revenue|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+            <div class="label">Monthly Profit</div>
+            <div class="value">Rs. {{ monthly_profit|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+            <div class="label">Monthly Expenses</div>
+            <div class="value">Rs. {{ monthly_expense_total|floatformat:2 }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+            <div class="label">Net Profit</div>
+            <div class="value">Rs. {{ net_profit|floatformat:2 }}</div>
+        </div>
+    </div>
+</div>
+<h6 class="text-muted fw-semibold mb-3">DETAILED REPORTS</h6>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="content-card">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-cart3 fs-1 text-primary mb-3 d-block"></i>
+                <h6 class="fw-bold">Sales Report</h6>
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="{% url 'sales_report' %}" class="btn-primary-custom btn btn-sm"><i class="bi bi-eye me-1"></i> View</a>
+                    <a href="{% url 'export_sales_csv' %}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="content-card">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-receipt fs-1 text-success mb-3 d-block"></i>
+                <h6 class="fw-bold">Purchases Report</h6>
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="{% url 'purchases_report' %}" class="btn-primary-custom btn btn-sm"><i class="bi bi-eye me-1"></i> View</a>
+                    <a href="{% url 'export_purchases_csv' %}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="content-card">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-cash-stack fs-1 text-danger mb-3 d-block"></i>
+                <h6 class="fw-bold">Expenses Report</h6>
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="{% url 'expenses_report' %}" class="btn-primary-custom btn btn-sm"><i class="bi bi-eye me-1"></i> View</a>
+                    <a href="{% url 'export_expenses_csv' %}" class="btn btn-sm btn-outline-success"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="content-card">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-calculator fs-1 text-warning mb-3 d-block"></i>
+                <h6 class="fw-bold">Profit & Loss</h6>
+                <a href="{% url 'profit_loss_report' %}" class="btn-primary-custom btn btn-sm mt-3"><i class="bi bi-eye me-1"></i> View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="content-card">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-box-seam fs-1 text-info mb-3 d-block"></i>
+                <h6 class="fw-bold">Inventory Report</h6>
+                <a href="{% url 'inventory_report' %}" class="btn-primary-custom btn btn-sm mt-3"><i class="bi bi-eye me-1"></i> View</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
