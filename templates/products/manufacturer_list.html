@@ -5,6 +5,18 @@
     <h5 class="fw-bold mb-0"><i class="bi bi-building me-2 text-primary"></i>Manufacturers</h5>
     <a href="{% url 'manufacturer_add' %}" class="btn-primary-custom btn"><i class="bi bi-plus-lg me-1"></i> Add Manufacturer</a>
 </div>
+<div class="content-card mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2">
+            <div class="col-md-10">
+                <input type="text" name="search" class="form-control" placeholder="Search manufacturer..." value="{{ search }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn-primary-custom btn w-100"><i class="bi bi-search me-1"></i> Search</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="content-card">
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
@@ -18,7 +30,7 @@
                     <td><a href="{% url 'manufacturer_delete' man.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a></td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="4" class="text-center text-muted py-4">No manufacturers yet.</td></tr>
+                <tr><td colspan="4" class="text-center text-muted py-4">No manufacturers found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

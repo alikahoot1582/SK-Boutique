@@ -8,6 +8,18 @@
         <a href="{% url 'expense_add' %}" class="btn-primary-custom btn"><i class="bi bi-plus-lg me-1"></i> Add Expense</a>
     </div>
 </div>
+<div class="content-card mb-4">
+    <div class="card-body p-3">
+        <form method="get" class="row g-2">
+            <div class="col-md-10">
+                <input type="text" name="search" class="form-control" placeholder="Search by title or category..." value="{{ search }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn-primary-custom btn w-100"><i class="bi bi-search me-1"></i> Search</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="row g-3 mb-4">
     <div class="col-md-6">
         <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
@@ -45,7 +57,7 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No expenses yet.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">No expenses found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

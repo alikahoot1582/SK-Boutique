@@ -6,8 +6,11 @@ from .models import Customer
 
 @login_required
 def customer_list(request):
+    search = request.GET.get('search', '')
     customers = Customer.objects.all().order_by('-created_at')
-    return render(request, 'customers/customer_list.html', {'customers': customers})
+    if search:
+        customers = customers.filter(name__icontains=search) | customers.filter(phone__icontains=search)
+    return render(request, 'customers/customer_list.html', {'customers': customers, 'search': search})
 
 
 @login_required

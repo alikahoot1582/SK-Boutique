@@ -6,6 +6,21 @@ class Customer(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+
+    # Saved Measurements
+    saved_size = models.CharField(max_length=10, blank=True, null=True)
+    saved_shirt_length = models.CharField(max_length=20, blank=True, null=True)
+    saved_shoulder = models.CharField(max_length=20, blank=True, null=True)
+    saved_chest = models.CharField(max_length=20, blank=True, null=True)
+    saved_waist = models.CharField(max_length=20, blank=True, null=True)
+    saved_sleeve_length = models.CharField(max_length=20, blank=True, null=True)
+    saved_collar = models.CharField(max_length=20, blank=True, null=True)
+    saved_shalwar_length = models.CharField(max_length=20, blank=True, null=True)
+    saved_shalwar_waist = models.CharField(max_length=20, blank=True, null=True)
+    saved_hip = models.CharField(max_length=20, blank=True, null=True)
+    saved_bottom_width = models.CharField(max_length=20, blank=True, null=True)
+    saved_extra_measurements = models.TextField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

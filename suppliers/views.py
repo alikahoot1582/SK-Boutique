@@ -6,8 +6,11 @@ from .models import Supplier
 
 @login_required
 def supplier_list(request):
+    search = request.GET.get('search', '')
     suppliers = Supplier.objects.all().order_by('-created_at')
-    return render(request, 'suppliers/supplier_list.html', {'suppliers': suppliers})
+    if search:
+        suppliers = suppliers.filter(name__icontains=search) | suppliers.filter(phone__icontains=search)
+    return render(request, 'suppliers/supplier_list.html', {'suppliers': suppliers, 'search': search})
 
 
 @login_required

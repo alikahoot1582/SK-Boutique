@@ -7,14 +7,18 @@ from .models import Expense, ExpenseCategory
 
 @login_required
 def expense_list(request):
+    search = request.GET.get('search', '')
     expenses = Expense.objects.all().order_by('-date')
+    if search:
+        expenses = expenses.filter(title__icontains=search) | expenses.filter(category__name__icontains=search)
     total = sum(exp.amount for exp in expenses)
     today = timezone.now().date()
-    today_total = sum(exp.amount for exp in expenses.filter(date=today))
+    today_total = sum(exp.amount for exp in Expense.objects.filter(date=today))
     return render(request, 'expenses/expense_list.html', {
         'expenses': expenses,
         'total': total,
         'today_total': today_total,
+        'search': search,
     })
 
 

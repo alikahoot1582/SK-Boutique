@@ -4,11 +4,13 @@ from django.contrib import messages
 from .models import Category, SubCategory, Manufacturer, Product
 
 
-# ─── Categories ───────────────────────────────────────
 @login_required
 def category_list(request):
+    search = request.GET.get('search', '')
     categories = Category.objects.all().order_by('-created_at')
-    return render(request, 'products/category_list.html', {'categories': categories})
+    if search:
+        categories = categories.filter(name__icontains=search)
+    return render(request, 'products/category_list.html', {'categories': categories, 'search': search})
 
 
 @login_required
@@ -30,11 +32,13 @@ def category_delete(request, pk):
     return redirect('category_list')
 
 
-# ─── Sub Categories ───────────────────────────────────
 @login_required
 def subcategory_list(request):
+    search = request.GET.get('search', '')
     subcategories = SubCategory.objects.all().order_by('-created_at')
-    return render(request, 'products/subcategory_list.html', {'subcategories': subcategories})
+    if search:
+        subcategories = subcategories.filter(name__icontains=search)
+    return render(request, 'products/subcategory_list.html', {'subcategories': subcategories, 'search': search})
 
 
 @login_required
@@ -58,11 +62,13 @@ def subcategory_delete(request, pk):
     return redirect('subcategory_list')
 
 
-# ─── Manufacturers ────────────────────────────────────
 @login_required
 def manufacturer_list(request):
+    search = request.GET.get('search', '')
     manufacturers = Manufacturer.objects.all().order_by('-created_at')
-    return render(request, 'products/manufacturer_list.html', {'manufacturers': manufacturers})
+    if search:
+        manufacturers = manufacturers.filter(name__icontains=search)
+    return render(request, 'products/manufacturer_list.html', {'manufacturers': manufacturers, 'search': search})
 
 
 @login_required
@@ -84,11 +90,13 @@ def manufacturer_delete(request, pk):
     return redirect('manufacturer_list')
 
 
-# ─── Products ─────────────────────────────────────────
 @login_required
 def product_list(request):
+    search = request.GET.get('search', '')
     products = Product.objects.all().order_by('-created_at')
-    return render(request, 'products/product_list.html', {'products': products})
+    if search:
+        products = products.filter(name__icontains=search) | products.filter(product_code__icontains=search)
+    return render(request, 'products/product_list.html', {'products': products, 'search': search})
 
 
 @login_required
@@ -96,7 +104,6 @@ def product_add(request):
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
     manufacturers = Manufacturer.objects.all()
-
     if request.method == 'POST':
         try:
             Product.objects.create(
@@ -115,7 +122,6 @@ def product_add(request):
             return redirect('product_list')
         except Exception as e:
             messages.error(request, f'Error adding product: {str(e)}')
-
     return render(request, 'products/product_add.html', {
         'categories': categories,
         'subcategories': subcategories,
@@ -129,7 +135,6 @@ def product_edit(request, pk):
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
     manufacturers = Manufacturer.objects.all()
-
     if request.method == 'POST':
         try:
             product.name = request.POST.get('name')
@@ -148,7 +153,6 @@ def product_edit(request, pk):
             return redirect('product_list')
         except Exception as e:
             messages.error(request, f'Error updating product: {str(e)}')
-
     return render(request, 'products/product_edit.html', {
         'product': product,
         'categories': categories,
