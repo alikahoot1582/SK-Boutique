@@ -62,8 +62,8 @@
                         <a href="{% url 'supplier_edit' supplier.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{% url 'supplier_delete' supplier.pk %}" class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Delete {{ supplier.name }}?')">
+                        <a href="#" class="btn btn-sm btn-outline-danger"
+                           onclick="globalConfirmDelete('{% url 'supplier_delete' supplier.pk %}', '{{ supplier.name }}')">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

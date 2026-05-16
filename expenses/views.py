@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.utils import timezone
 from .models import Expense, ExpenseCategory
 
+ADMIN_PASSWORD = 'boutique123'
 
 @login_required
 def expense_list(request):
@@ -20,7 +21,6 @@ def expense_list(request):
         'today_total': today_total,
         'search': search,
     })
-
 
 @login_required
 def expense_add(request):
@@ -40,12 +40,15 @@ def expense_add(request):
         'today': timezone.now().date(),
     })
 
-
 @login_required
 def expense_edit(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
     categories = ExpenseCategory.objects.all()
     if request.method == 'POST':
+        password = request.POST.get('edit_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Changes not saved.')
+            return render(request, 'expenses/expense_edit.html', {'expense': expense, 'categories': categories})
         expense.category_id = request.POST.get('category') or None
         expense.title = request.POST.get('title')
         expense.amount = request.POST.get('amount')
@@ -59,20 +62,22 @@ def expense_edit(request, pk):
         'categories': categories,
     })
 
-
 @login_required
 def expense_delete(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
-    expense.delete()
-    messages.success(request, 'Expense deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Expense not deleted.')
+            return redirect('expense_list')
+        expense = get_object_or_404(Expense, pk=pk)
+        expense.delete()
+        messages.success(request, 'Expense deleted successfully.')
     return redirect('expense_list')
-
 
 @login_required
 def category_list(request):
     categories = ExpenseCategory.objects.all()
     return render(request, 'expenses/category_list.html', {'categories': categories})
-
 
 @login_required
 def category_add(request):
@@ -84,10 +89,14 @@ def category_add(request):
             return redirect('expense_category_list')
     return render(request, 'expenses/category_add.html')
 
-
 @login_required
 def category_delete(request, pk):
-    category = get_object_or_404(ExpenseCategory, pk=pk)
-    category.delete()
-    messages.success(request, 'Category deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password!')
+            return redirect('expense_category_list')
+        category = get_object_or_404(ExpenseCategory, pk=pk)
+        category.delete()
+        messages.success(request, 'Category deleted successfully.')
     return redirect('expense_category_list')

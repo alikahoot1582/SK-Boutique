@@ -32,9 +32,9 @@
                     <td>{{ forloop.counter }}</td>
                     <td><strong>{{ cat.name }}</strong></td>
                     <td>
-                        <a href="{% url 'expense_category_delete' cat.pk %}"
+                        <a href="#"
                            class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Delete {{ cat.name }}?')">
+                           onclick="globalConfirmDelete('{% url 'expense_category_delete' cat.pk %}', '{{ cat.name }}')">
                             <i class="bi bi-trash"></i> Delete
                         </a>
                     </td>

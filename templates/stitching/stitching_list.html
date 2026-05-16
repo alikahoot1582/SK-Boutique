@@ -9,7 +9,6 @@
     </a>
 </div>
 
-<!-- Search -->
 <div class="content-card mb-4">
     <div class="card-body p-3">
         <form method="get" class="row g-2">
@@ -27,7 +26,6 @@
     </div>
 </div>
 
-<!-- Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
@@ -63,7 +61,6 @@
     </div>
 </div>
 
-<!-- Table -->
 <div class="content-card">
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
@@ -105,8 +102,8 @@
                         <a href="{% url 'stitching_edit' order.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a href="{% url 'stitching_delete' order.pk %}" class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Delete this order?')">
+                        <a href="#" class="btn btn-sm btn-outline-danger"
+                           onclick="globalConfirmDelete('{% url 'stitching_delete' order.pk %}', '{{ order.customer_name }}')">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

@@ -53,7 +53,10 @@
                     <td>{{ expense.notes|default:"-" }}</td>
                     <td>
                         <a href="{% url 'expense_edit' expense.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                        <a href="{% url 'expense_delete' expense.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-danger"
+                           onclick="globalConfirmDelete('{% url 'expense_delete' expense.pk %}', '{{ expense.title }}')">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}

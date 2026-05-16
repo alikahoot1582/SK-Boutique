@@ -178,6 +178,18 @@
     </div>
 </div>
 
+<!-- Admin Password -->
+<div class="content-card mb-4">
+    <div class="card-body p-4">
+        <label class="form-label fw-semibold text-danger">
+            <i class="bi bi-lock-fill me-1"></i> Admin Password *
+        </label>
+        <input type="password" name="edit_password" class="form-control"
+               style="max-width:300px;"
+               placeholder="Enter admin password to save changes" required>
+    </div>
+</div>
+
 <div class="d-flex gap-3">
     <button type="submit" class="btn-primary-custom btn">
         <i class="bi bi-check-lg me-1"></i> Update Order
@@ -195,7 +207,6 @@ function loadSizeMeasurements() {
     const size = document.getElementById('sizeSelect').value;
     const customerId = document.getElementById('customerSelect').value;
     if (!size) return;
-
     fetch(`{% url 'get_size_measurements' %}?size=${size}&customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {
@@ -215,7 +226,6 @@ function loadSizeMeasurements() {
 function loadCustomerMeasurements() {
     const customerId = document.getElementById('customerSelect').value;
     if (!customerId) return;
-
     fetch(`{% url 'get_customer_measurements' %}?customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {

@@ -36,6 +36,13 @@
                     <textarea name="address" class="form-control" rows="3">{{ customer.address|default:'' }}</textarea>
                 </div>
                 <div class="col-12">
+                    <label class="form-label fw-semibold text-danger">
+                        <i class="bi bi-lock-fill me-1"></i> Admin Password *
+                    </label>
+                    <input type="password" name="edit_password" class="form-control"
+                           placeholder="Enter admin password to save changes" required>
+                </div>
+                <div class="col-12">
                     <button type="submit" class="btn-primary-custom btn">
                         <i class="bi bi-check-lg me-1"></i> Update Customer
                     </button>

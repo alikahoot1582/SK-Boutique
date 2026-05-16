@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Supplier
 
+ADMIN_PASSWORD = 'boutique123'
 
 @login_required
 def supplier_list(request):
@@ -11,7 +12,6 @@ def supplier_list(request):
     if search:
         suppliers = suppliers.filter(name__icontains=search) | suppliers.filter(phone__icontains=search)
     return render(request, 'suppliers/supplier_list.html', {'suppliers': suppliers, 'search': search})
-
 
 @login_required
 def supplier_add(request):
@@ -27,11 +27,14 @@ def supplier_add(request):
         return redirect('supplier_list')
     return render(request, 'suppliers/supplier_add.html')
 
-
 @login_required
 def supplier_edit(request, pk):
     supplier = get_object_or_404(Supplier, pk=pk)
     if request.method == 'POST':
+        password = request.POST.get('edit_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Changes not saved.')
+            return render(request, 'suppliers/supplier_edit.html', {'supplier': supplier})
         supplier.name = request.POST.get('name')
         supplier.business_name = request.POST.get('business_name') or None
         supplier.phone = request.POST.get('phone') or None
@@ -43,10 +46,14 @@ def supplier_edit(request, pk):
         return redirect('supplier_list')
     return render(request, 'suppliers/supplier_edit.html', {'supplier': supplier})
 
-
 @login_required
 def supplier_delete(request, pk):
-    supplier = get_object_or_404(Supplier, pk=pk)
-    supplier.delete()
-    messages.success(request, 'Supplier deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Supplier not deleted.')
+            return redirect('supplier_list')
+        supplier = get_object_or_404(Supplier, pk=pk)
+        supplier.delete()
+        messages.success(request, 'Supplier deleted successfully.')
     return redirect('supplier_list')

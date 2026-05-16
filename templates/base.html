@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,41 +54,49 @@
 <body>
 <nav id="sidebar">
     <div class="sidebar-header">
-        <div class="shop-icon"><i class="bi bi-shop"></i></div>
+        <img src="{% static 'images/logo.jpeg' %}" alt="Boutique Logo"
+             style="width:70px; height:70px; border-radius:15px; object-fit:cover; margin: 0 auto 10px; display:block; box-shadow: 0 4px 15px rgba(232,62,140,0.4);">
         <h4>Boutique</h4>
         <p>Management System</p>
     </div>
     <div class="sidebar-nav">
         <ul class="components">
-            <li><a href="{% url "dashboard" %}" class="{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+
             <div class="sidebar-label">Catalog</div>
-            <li><a href="{% url "category_list" %}" class="{% if request.resolver_match.url_name == "category_list" %}active{% endif %}"><i class="bi bi-tags"></i> Categories</a></li>
-            <li><a href="{% url "subcategory_list" %}" class="{% if request.resolver_match.url_name == "subcategory_list" %}active{% endif %}"><i class="bi bi-diagram-3"></i> Sub Categories</a></li>
-            <li><a href="{% url "manufacturer_list" %}" class="{% if request.resolver_match.url_name == "manufacturer_list" %}active{% endif %}"><i class="bi bi-building"></i> Manufacturers</a></li>
+            <li><a href="{% url 'category_list' %}" class="{% if request.resolver_match.url_name == 'category_list' %}active{% endif %}"><i class="bi bi-tags"></i> Categories</a></li>
+            <li><a href="{% url 'subcategory_list' %}" class="{% if request.resolver_match.url_name == 'subcategory_list' %}active{% endif %}"><i class="bi bi-diagram-3"></i> Sub Categories</a></li>
+            <li><a href="{% url 'manufacturer_list' %}" class="{% if request.resolver_match.url_name == 'manufacturer_list' %}active{% endif %}"><i class="bi bi-building"></i> Manufacturers</a></li>
+
             <div class="sidebar-label">Inventory</div>
-            <li><a href="{% url "product_list" %}" class="{% if request.resolver_match.url_name == "product_list" %}active{% endif %}"><i class="bi bi-box-seam"></i> Products</a></li>
-            <li><a href="{% url "supplier_list" %}" class="{% if request.resolver_match.url_name == "supplier_list" %}active{% endif %}"><i class="bi bi-person-lines-fill"></i> Suppliers</a></li>
-            <li><a href="{% url "purchase_list" %}" class="{% if request.resolver_match.url_name == "purchase_list" %}active{% endif %}"><i class="bi bi-receipt"></i> Purchases</a></li>
+            <li><a href="{% url 'product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"><i class="bi bi-box-seam"></i> Products</a></li>
+            <li><a href="{% url 'supplier_list' %}" class="{% if request.resolver_match.url_name == 'supplier_list' %}active{% endif %}"><i class="bi bi-person-lines-fill"></i> Suppliers</a></li>
+            <li><a href="{% url 'purchase_list' %}" class="{% if request.resolver_match.url_name == 'purchase_list' %}active{% endif %}"><i class="bi bi-receipt"></i> Purchases</a></li>
+
             <div class="sidebar-label">Sales</div>
-            <li><a href="{% url "sale_list" %}" class="{% if request.resolver_match.url_name == "sale_list" %}active{% endif %}"><i class="bi bi-cart3"></i> Sales</a></li>
-            <li><a href="{% url "customer_list" %}" class="{% if request.resolver_match.url_name == "customer_list" %}active{% endif %}"><i class="bi bi-people"></i> Customers</a></li>
+            <li><a href="{% url 'sale_list' %}" class="{% if request.resolver_match.url_name == 'sale_list' %}active{% endif %}"><i class="bi bi-cart3"></i> Sales</a></li>
+            <li><a href="{% url 'sale_return_list' %}" class="{% if request.resolver_match.url_name == 'sale_return_list' %}active{% endif %}"><i class="bi bi-arrow-return-left"></i> Returns & Exchanges</a></li>
+            <li><a href="{% url 'customer_list' %}" class="{% if request.resolver_match.url_name == 'customer_list' %}active{% endif %}"><i class="bi bi-people"></i> Customers</a></li>
+
             <div class="sidebar-label">Stitching</div>
-            <li><a href="{% url "stitching_list" %}" class="{% if request.resolver_match.url_name == "stitching_list" %}active{% endif %}"><i class="bi bi-scissors"></i> Stitching Orders</a></li>
+            <li><a href="{% url 'stitching_list' %}" class="{% if request.resolver_match.url_name == 'stitching_list' %}active{% endif %}"><i class="bi bi-scissors"></i> Stitching Orders</a></li>
+
             <div class="sidebar-label">Finance</div>
-            <li><a href="{% url "expense_list" %}" class="{% if request.resolver_match.url_name == "expense_list" %}active{% endif %}"><i class="bi bi-cash-stack"></i> Expenses</a></li>
-            <li><a href="{% url "reports_home" %}" class="{% if request.resolver_match.url_name == "reports_home" %}active{% endif %}"><i class="bi bi-bar-chart-line"></i> Reports</a></li>
+            <li><a href="{% url 'expense_list' %}" class="{% if request.resolver_match.url_name == 'expense_list' %}active{% endif %}"><i class="bi bi-cash-stack"></i> Expenses</a></li>
+            <li><a href="{% url 'reports_home' %}" class="{% if request.resolver_match.url_name == 'reports_home' %}active{% endif %}"><i class="bi bi-bar-chart-line"></i> Reports</a></li>
         </ul>
     </div>
 </nav>
+
 <div id="content">
     <div class="top-navbar">
         <div class="d-flex align-items-center">
             <button id="sidebarCollapse" class="btn btn-sm btn-outline-secondary me-3 d-md-none"><i class="bi bi-list"></i></button>
             <h5 class="page-heading">{% block page_title %}Dashboard{% endblock %}</h5>
         </div>
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items: center gap-3">
             <div class="user-badge"><i class="bi bi-person-circle me-1"></i>{{ request.user.username }}</div>
-            <a href="{% url "logout" %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
         </div>
     </div>
     <div class="page-content">
@@ -110,22 +119,76 @@
             </div>
             <div style="text-align:center;">
                 <span style="color:#718096; font-size:12px;">Developed & Designed by</span><br>
-                <span class="dev-name">
-                    ✦ Rabia Muneeb ✦
-                </span>
+                <span class="dev-name">✦ Rabia Muneeb ✦</span>
             </div>
             <div style="text-align:right;">
-                <span style="color:#e83e8c; font-size:13px;">&copy; 2026</span>
-                <span style="color:#718096; font-size:12px;"> All Rights Reserved</span>
+                <i class="bi bi-telephone-fill" style="color:#e83e8c;"></i>
+                <span style="color:#fff; font-size:13px; font-weight:600;"> 0346 2934847</span>
             </div>
         </div>
     </footer>
 </div>
+
+<!-- Global Delete Password Modal -->
+<div class="modal fade" id="globalDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title text-danger">
+                    <i class="bi bi-lock-fill me-2"></i>Admin Password Required
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">Enter admin password to delete this entry.</p>
+                <input type="password" id="globalDeletePassword"
+                       class="form-control" placeholder="Enter password...">
+                <div id="globalDeleteError" class="text-danger small mt-2" style="display:none;">
+                    Incorrect password!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="submitGlobalDelete()">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const sidebarBtn = document.getElementById("sidebarCollapse");
     if(sidebarBtn) { sidebarBtn.addEventListener("click", function() { document.getElementById("sidebar").classList.toggle("active"); }); }
+
+    let globalDeleteUrl = '';
+
+    function globalConfirmDelete(url, name) {
+        globalDeleteUrl = url;
+        document.getElementById('globalDeletePassword').value = '';
+        document.getElementById('globalDeleteError').style.display = 'none';
+        new bootstrap.Modal(document.getElementById('globalDeleteModal')).show();
+    }
+
+    function submitGlobalDelete() {
+        var password = document.getElementById('globalDeletePassword').value;
+        if (password !== 'boutique123') {
+            document.getElementById('globalDeleteError').style.display = 'block';
+            return;
+        }
+        var modalEl = document.getElementById('globalDeleteModal');
+        var modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+        setTimeout(function() {
+            document.querySelectorAll('.modal-backdrop').forEach(function(el) { el.remove(); });
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+            window.location.href = globalDeleteUrl;
+        }, 300);
+    }
 </script>
 {% block extra_js %}{% endblock %}
 </body>

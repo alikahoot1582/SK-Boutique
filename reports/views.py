@@ -16,14 +16,19 @@ def reports_home(request):
     today = timezone.now().date()
     month_start = today.replace(day=1)
 
-    # Sales stats
+    # Today Sales stats
     today_sales = Sale.objects.filter(sale_date__date=today)
     today_revenue = sum(s.net_total for s in today_sales)
     today_profit = sum(s.total_profit for s in today_sales)
+    today_discount = sum(s.discount_amount for s in today_sales)
+    today_sales_count = today_sales.count()
 
+    # Monthly Sales stats
     monthly_sales = Sale.objects.filter(sale_date__date__gte=month_start)
     monthly_revenue = sum(s.net_total for s in monthly_sales)
     monthly_profit = sum(s.total_profit for s in monthly_sales)
+    monthly_discount = sum(s.discount_amount for s in monthly_sales)
+    monthly_sales_count = monthly_sales.count()
 
     # Purchase stats
     monthly_purchases = PurchaseInvoice.objects.filter(invoice_date__gte=month_start)
@@ -41,9 +46,13 @@ def reports_home(request):
     return render(request, 'reports/reports_home.html', {
         'today_revenue': today_revenue,
         'today_profit': today_profit,
+        'today_discount': today_discount,
+        'today_sales_count': today_sales_count,
         'today_expense_total': today_expense_total,
         'monthly_revenue': monthly_revenue,
         'monthly_profit': monthly_profit,
+        'monthly_discount': monthly_discount,
+        'monthly_sales_count': monthly_sales_count,
         'monthly_purchase_total': monthly_purchase_total,
         'monthly_expense_total': monthly_expense_total,
         'net_profit': net_profit,

@@ -16,13 +16,11 @@
         <form method="post">
             {% csrf_token %}
             <div class="row g-3">
-
                 <div class="col-12">
                     <label class="form-label fw-semibold">Expense Title *</label>
                     <input type="text" name="title" class="form-control"
                            value="{{ expense.title }}" required>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Category</label>
                     <select name="category" class="form-select">
@@ -35,30 +33,32 @@
                         {% endfor %}
                     </select>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Amount (Rs.) *</label>
                     <input type="number" name="amount" class="form-control"
                            value="{{ expense.amount }}" step="0.01" min="0" required>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Date *</label>
                     <input type="date" name="date" class="form-control"
                            value="{{ expense.date|date:'Y-m-d' }}" required>
                 </div>
-
                 <div class="col-12">
                     <label class="form-label fw-semibold">Notes</label>
                     <textarea name="notes" class="form-control" rows="2">{{ expense.notes|default:'' }}</textarea>
                 </div>
-
+                <div class="col-12">
+                    <label class="form-label fw-semibold text-danger">
+                        <i class="bi bi-lock-fill me-1"></i> Admin Password *
+                    </label>
+                    <input type="password" name="edit_password" class="form-control"
+                           placeholder="Enter admin password to save changes" required>
+                </div>
                 <div class="col-12">
                     <button type="submit" class="btn-primary-custom btn">
                         <i class="bi bi-check-lg me-1"></i> Update Expense
                     </button>
                 </div>
-
             </div>
         </form>
     </div>

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Category, SubCategory, Manufacturer, Product
 
+ADMIN_PASSWORD = 'boutique123'
 
 @login_required
 def category_list(request):
@@ -11,7 +12,6 @@ def category_list(request):
     if search:
         categories = categories.filter(name__icontains=search)
     return render(request, 'products/category_list.html', {'categories': categories, 'search': search})
-
 
 @login_required
 def category_add(request):
@@ -23,14 +23,17 @@ def category_add(request):
             return redirect('category_list')
     return render(request, 'products/category_add.html')
 
-
 @login_required
 def category_delete(request, pk):
-    category = get_object_or_404(Category, pk=pk)
-    category.delete()
-    messages.success(request, 'Category deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password!')
+            return redirect('category_list')
+        category = get_object_or_404(Category, pk=pk)
+        category.delete()
+        messages.success(request, 'Category deleted successfully.')
     return redirect('category_list')
-
 
 @login_required
 def subcategory_list(request):
@@ -40,27 +43,35 @@ def subcategory_list(request):
         subcategories = subcategories.filter(name__icontains=search)
     return render(request, 'products/subcategory_list.html', {'subcategories': subcategories, 'search': search})
 
-
 @login_required
 def subcategory_add(request):
     categories = Category.objects.all()
     if request.method == 'POST':
         name = request.POST.get('name')
         category_id = request.POST.get('category')
+        category_manual = request.POST.get('category_manual', '').strip()
+        if category_manual:
+            category, created = Category.objects.get_or_create(name=category_manual)
+            category_id = category.pk
         if name and category_id:
             SubCategory.objects.create(name=name, category_id=category_id)
             messages.success(request, 'Sub Category added successfully.')
             return redirect('subcategory_list')
+        else:
+            messages.error(request, 'Please provide both category and sub category name.')
     return render(request, 'products/subcategory_add.html', {'categories': categories})
-
 
 @login_required
 def subcategory_delete(request, pk):
-    subcategory = get_object_or_404(SubCategory, pk=pk)
-    subcategory.delete()
-    messages.success(request, 'Sub Category deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password!')
+            return redirect('subcategory_list')
+        subcategory = get_object_or_404(SubCategory, pk=pk)
+        subcategory.delete()
+        messages.success(request, 'Sub Category deleted successfully.')
     return redirect('subcategory_list')
-
 
 @login_required
 def manufacturer_list(request):
@@ -69,7 +80,6 @@ def manufacturer_list(request):
     if search:
         manufacturers = manufacturers.filter(name__icontains=search)
     return render(request, 'products/manufacturer_list.html', {'manufacturers': manufacturers, 'search': search})
-
 
 @login_required
 def manufacturer_add(request):
@@ -81,14 +91,17 @@ def manufacturer_add(request):
             return redirect('manufacturer_list')
     return render(request, 'products/manufacturer_add.html')
 
-
 @login_required
 def manufacturer_delete(request, pk):
-    manufacturer = get_object_or_404(Manufacturer, pk=pk)
-    manufacturer.delete()
-    messages.success(request, 'Manufacturer deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password!')
+            return redirect('manufacturer_list')
+        manufacturer = get_object_or_404(Manufacturer, pk=pk)
+        manufacturer.delete()
+        messages.success(request, 'Manufacturer deleted successfully.')
     return redirect('manufacturer_list')
-
 
 @login_required
 def product_list(request):
@@ -97,7 +110,6 @@ def product_list(request):
     if search:
         products = products.filter(name__icontains=search) | products.filter(product_code__icontains=search)
     return render(request, 'products/product_list.html', {'products': products, 'search': search})
-
 
 @login_required
 def product_add(request):
@@ -128,7 +140,6 @@ def product_add(request):
         'manufacturers': manufacturers,
     })
 
-
 @login_required
 def product_edit(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -136,6 +147,15 @@ def product_edit(request, pk):
     subcategories = SubCategory.objects.all()
     manufacturers = Manufacturer.objects.all()
     if request.method == 'POST':
+        password = request.POST.get('edit_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Changes not saved.')
+            return render(request, 'products/product_edit.html', {
+                'product': product,
+                'categories': categories,
+                'subcategories': subcategories,
+                'manufacturers': manufacturers,
+            })
         try:
             product.name = request.POST.get('name')
             product.product_code = request.POST.get('product_code') or None
@@ -160,10 +180,14 @@ def product_edit(request, pk):
         'manufacturers': manufacturers,
     })
 
-
 @login_required
 def product_delete(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    product.delete()
-    messages.success(request, 'Product deleted successfully.')
+    if request.method == 'POST':
+        password = request.POST.get('delete_password', '')
+        if password != ADMIN_PASSWORD:
+            messages.error(request, 'Incorrect password! Product not deleted.')
+            return redirect('product_list')
+        product = get_object_or_404(Product, pk=pk)
+        product.delete()
+        messages.success(request, 'Product deleted successfully.')
     return redirect('product_list')

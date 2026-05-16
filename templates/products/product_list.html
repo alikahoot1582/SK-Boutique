@@ -20,7 +20,28 @@
 <div class="content-card">
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
-            <thead><tr><th>#</th><th>Name</th><th>Code</th><th>Category</th><th>Stock</th><th>Purchase Price</th><th>Sale Price</th><th>Profit %</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Purchase Price</th>
+                    <th>Sale Price</th>
+                    <th>
+                        Profit %
+                        <button onclick="toggleProfit()"
+                                class="btn btn-sm btn-outline-secondary ms-1"
+                                style="padding:1px 6px; font-size:11px;"
+                                id="profitColBtn">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody>
                 {% for product in products %}
                 <tr>
@@ -28,14 +49,40 @@
                     <td><strong>{{ product.name }}</strong></td>
                     <td>{{ product.product_code|default:"-" }}</td>
                     <td>{{ product.category|default:"-" }}</td>
-                    <td>{% if product.is_low_stock %}<span class="badge bg-danger">{{ product.stock }}</span>{% else %}<span class="badge bg-success">{{ product.stock }}</span>{% endif %} {{ product.unit_type }}</td>
-                    <td>Rs. {{ product.purchase_price }}</td>
-                    <td>Rs. {{ product.sale_price }}</td>
-                    <td><span class="badge bg-info">{{ product.profit_percentage }}%</span></td>
-                    <td>{% if product.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
                     <td>
-                        <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                        <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="bi bi-trash"></i></a>
+                        {% if product.is_low_stock %}
+                        <span class="badge bg-danger">{{ product.stock }}</span>
+                        {% else %}
+                        <span class="badge bg-success">{{ product.stock }}</span>
+                        {% endif %}
+                        {{ product.unit_type }}
+                    </td>
+                    <td class="purchase-sensitive">
+                        <span class="purchase-display">••••</span>
+                        <span class="purchase-value d-none">Rs. {{ product.purchase_price }}</span>
+                    </td>
+                    <td>Rs. {{ product.sale_price }}</td>
+                    <td>
+                        <span class="profit-display">••••</span>
+                        <span class="profit-value d-none">
+                            <span class="badge bg-info">{{ product.profit_percentage }}%</span>
+                        </span>
+                    </td>
+                    <td>
+                        {% if product.is_active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-danger"
+                           onclick="globalConfirmDelete('{% url 'product_delete' product.pk %}', '{{ product.name }}')">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
@@ -45,4 +92,77 @@
         </table>
     </div>
 </div>
+
+<!-- Profit Password Modal -->
+<div class="modal fade" id="profitModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">
+                    <i class="bi bi-lock-fill me-2 text-warning"></i>Enter Password
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="password" id="profitPassword" class="form-control" placeholder="Enter password...">
+                <div id="profitError" class="text-danger small mt-2" style="display:none;">Incorrect password!</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-warning" onclick="submitProfitPassword()">
+                    <i class="bi bi-eye me-1"></i> Show
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let profitVisible = false;
+
+function toggleProfit() {
+    if (!profitVisible) {
+        document.getElementById('profitPassword').value = '';
+        document.getElementById('profitError').style.display = 'none';
+        new bootstrap.Modal(document.getElementById('profitModal')).show();
+    } else {
+        hideProfits();
+    }
+}
+
+function submitProfitPassword() {
+    const pwd = document.getElementById('profitPassword').value;
+    if (pwd !== 'boutique123') {
+        document.getElementById('profitError').style.display = 'block';
+        return;
+    }
+    bootstrap.Modal.getInstance(document.getElementById('profitModal')).hide();
+    showProfits();
+}
+
+function showProfits() {
+    profitVisible = true;
+    document.getElementById('profitColBtn').innerHTML = '<i class="bi bi-eye"></i>';
+    document.querySelectorAll('.profit-display').forEach(el => {
+        el.innerHTML = el.nextElementSibling.innerHTML;
+    });
+    document.querySelectorAll('.purchase-display').forEach(el => {
+        el.textContent = el.nextElementSibling.textContent;
+    });
+}
+
+function hideProfits() {
+    profitVisible = false;
+    document.getElementById('profitColBtn').innerHTML = '<i class="bi bi-eye-slash"></i>';
+    document.querySelectorAll('.profit-display').forEach(el => {
+        el.innerHTML = '••••';
+    });
+    document.querySelectorAll('.purchase-display').forEach(el => {
+        el.textContent = '••••';
+    });
+}
+</script>
 {% endblock %}

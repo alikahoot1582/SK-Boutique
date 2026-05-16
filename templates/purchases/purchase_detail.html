@@ -79,11 +79,11 @@
                     </tr>
                     <tr>
                         <td class="text-muted">Total Paid:</td>
-                        <td><strong class="text-success">Rs. {{ invoice.paid_amount }}</strong></td>
+                        <td><strong class="text-success">Rs. {{ invoice.paid_amount|floatformat:2 }}</strong></td>
                     </tr>
                     <tr>
                         <td class="text-muted">Balance:</td>
-                        <td><strong class="text-danger">Rs. {{ invoice.balance }}</strong></td>
+                        <td><strong class="text-danger">Rs. {{ invoice.balance|floatformat:2 }}</strong></td>
                     </tr>
                 </table>
             </div>
@@ -114,12 +114,12 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><strong>{{ item.product.name }}</strong></td>
-                    <td>{{ item.quantity }}</td>
-                    <td>Rs. {{ item.purchase_price }}</td>
-                    <td>{{ item.discount }}%</td>
-                    <td>Rs. {{ item.total_price }}</td>
+                    <td>{{ item.quantity|floatformat:2 }}</td>
+                    <td>Rs. {{ item.purchase_price|floatformat:2 }}</td>
+                    <td>{{ item.discount|floatformat:2 }}%</td>
+                    <td>Rs. {{ item.total_price|floatformat:2 }}</td>
                     <td>
-                        <span class="badge bg-success">{{ item.profit_percentage }}%</span>
+                        <span class="badge bg-success">{{ item.profit_percentage|floatformat:2 }}%</span>
                     </td>
                 </tr>
                 {% endfor %}
@@ -127,7 +127,7 @@
             <tfoot>
                 <tr class="table-light">
                     <td colspan="5" class="text-end fw-bold">Net Total:</td>
-                    <td colspan="2" class="fw-bold text-success">Rs. {{ invoice.net_total }}</td>
+                    <td colspan="2" class="fw-bold text-success">Rs. {{ invoice.net_total|floatformat:2 }}</td>
                 </tr>
             </tfoot>
         </table>
