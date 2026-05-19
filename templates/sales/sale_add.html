@@ -325,7 +325,7 @@ function addSaleRow() {
         <td><span id="stock-${n}" class="badge bg-secondary">-</span></td>
         <td>
             <input type="number" name="quantity[]" class="form-control form-control-sm"
-                   placeholder="0" step="1" min="0"
+                   placeholder="0" step="any" min="0"
                    oninput="calculateSaleRow(${n})" id="saleqty-${n}">
         </td>
         <td>
@@ -390,9 +390,9 @@ function updateStock(id) {
 }
 
 function calculateSaleRow(id) {
-    const qty = Math.round(parseFloat(document.getElementById(`saleqty-${id}`)?.value || 0));
+    const qty = parseFloat(document.getElementById(`saleqty-${id}`)?.value || 0);
     const price = Math.round(parseFloat(document.getElementById(`saleprice-${id}`)?.value || 0));
-    const total = qty * price;
+    const total = Math.round(qty * price);
     const totalEl = document.getElementById(`saletotal-${id}`);
     if (totalEl) totalEl.textContent = total;
     updateSaleTotals();
