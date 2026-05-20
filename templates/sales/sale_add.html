@@ -158,7 +158,7 @@
 
 </form>
 
-<!-- Dropdown rendered on body to escape overflow clipping -->
+<!-- Dropdown -->
 <div id="customerDropdown"
      style="display:none; position:fixed; background:#fff;
             border:1px solid #dee2e6; border-radius:8px; z-index:99999;
@@ -390,7 +390,7 @@ function updateStock(id) {
 }
 
 function calculateSaleRow(id) {
-    const qty = parseFloat(document.getElementById(`saleqty-${id}`)?.value || 0);
+    const qty   = parseFloat(document.getElementById(`saleqty-${id}`)?.value || 0);
     const price = Math.round(parseFloat(document.getElementById(`saleprice-${id}`)?.value || 0));
     const total = Math.round(qty * price);
     const totalEl = document.getElementById(`saletotal-${id}`);

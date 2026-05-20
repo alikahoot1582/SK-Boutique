@@ -100,9 +100,10 @@
                         <a href="{% url 'sale_detail' sale.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{% url 'sale_edit' sale.pk %}" class="btn btn-sm btn-outline-warning">
+                        <button type="button" class="btn btn-sm btn-outline-warning"
+                                onclick="confirmEditAccess('{% url 'sale_edit' sale.pk %}')">
                             <i class="bi bi-pencil"></i>
-                        </a>
+                        </button>
                         <button type="button" class="btn btn-sm btn-outline-danger"
                                 onclick="globalConfirmDelete('{% url 'sale_delete' sale.pk %}', '{{ sale.invoice_number }}')">
                             <i class="bi bi-trash"></i>
@@ -114,6 +115,34 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Edit Password Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title text-warning">
+                    <i class="bi bi-lock-fill me-2"></i>Admin Password Required
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">Enter admin password to edit this sale.</p>
+                <input type="password" id="editPassword"
+                       class="form-control" placeholder="Enter password...">
+                <div id="editError" class="text-danger small mt-2" style="display:none;">
+                    Incorrect password!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-warning" onclick="submitEditPassword()">
+                    <i class="bi bi-pencil me-1"></i> Edit Sale
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -146,6 +175,27 @@
 {% block extra_js %}
 <script>
 let profitVisible = false;
+let editUrl = '';
+
+function confirmEditAccess(url) {
+    editUrl = url;
+    document.getElementById('editPassword').value = '';
+    document.getElementById('editError').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('editModal')).show();
+}
+
+function submitEditPassword() {
+    const pwd = document.getElementById('editPassword').value;
+    if (pwd !== 'boutique123') {
+        document.getElementById('editError').style.display = 'block';
+        return;
+    }
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+    modal.hide();
+    setTimeout(function() {
+        window.location.href = editUrl;
+    }, 300);
+}
 
 function toggleTotalProfit() {
     if (!profitVisible) {
@@ -173,8 +223,7 @@ function submitProfitPassword() {
         document.getElementById('profitError').style.display = 'block';
         return;
     }
-    const modal = bootstrap.Modal.getInstance(document.getElementById('profitModal'));
-    modal.hide();
+    bootstrap.Modal.getInstance(document.getElementById('profitModal')).hide();
     showProfits();
 }
 
