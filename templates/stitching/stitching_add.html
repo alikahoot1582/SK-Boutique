@@ -38,6 +38,10 @@
                 <input type="text" name="customer_phone" id="customerPhone" class="form-control" placeholder="e.g. 0300-1234567">
             </div>
             <div class="col-md-6">
+                <label class="form-label fw-semibold">Code Number</label>
+                <input type="text" name="code_number" class="form-control" placeholder="e.g. A-101">
+            </div>
+            <div class="col-md-6">
                 <label class="form-label fw-semibold">Fabric</label>
                 <select name="fabric" class="form-select">
                     <option value="">-- Select Fabric --</option>
@@ -52,13 +56,21 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Stitching Cost (Rs.)</label>
-                <input type="number" name="stitching_cost" class="form-control" placeholder="0" step="0.01" min="0">
+                <input type="number" name="stitching_cost" id="stitchingCost" class="form-control" placeholder="0" step="0.01" min="0" oninput="updateBalance()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Cash Received (Rs.)</label>
+                <input type="number" name="advance_payment" id="advancePayment" class="form-control" placeholder="0" step="0.01" min="0" oninput="updateBalance()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Remaining Balance (Rs.)</label>
+                <input type="text" id="remainingBalance" class="form-control bg-light fw-bold text-danger" readonly value="0">
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Delivery Date</label>
                 <input type="date" name="delivery_date" class="form-control">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label fw-semibold">Status</label>
                 <select name="status" class="form-select">
                     <option value="pending">Pending</option>
@@ -189,25 +201,34 @@
 
 {% block extra_js %}
 <script>
+function updateBalance() {
+    const cost    = parseFloat(document.getElementById('stitchingCost').value || 0);
+    const advance = parseFloat(document.getElementById('advancePayment').value || 0);
+    const balance = cost - advance;
+    const el      = document.getElementById('remainingBalance');
+    el.value      = balance;
+    el.className  = balance > 0
+        ? 'form-control bg-light fw-bold text-danger'
+        : 'form-control bg-light fw-bold text-success';
+}
+
 function loadSizeMeasurements() {
-    const size = document.getElementById('sizeSelect').value;
+    const size       = document.getElementById('sizeSelect').value;
     const customerId = document.getElementById('customerSelect').value;
-
     if (!size) return;
-
     fetch(`{% url 'get_size_measurements' %}?size=${size}&customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.shirt_length) document.getElementById('shirt_length').value = data.shirt_length + '"';
-            if (data.shoulder) document.getElementById('shoulder').value = data.shoulder + '"';
-            if (data.chest) document.getElementById('chest').value = data.chest + '"';
-            if (data.waist) document.getElementById('waist').value = data.waist + '"';
+            if (data.shirt_length)  document.getElementById('shirt_length').value  = data.shirt_length + '"';
+            if (data.shoulder)      document.getElementById('shoulder').value      = data.shoulder + '"';
+            if (data.chest)         document.getElementById('chest').value         = data.chest + '"';
+            if (data.waist)         document.getElementById('waist').value         = data.waist + '"';
             if (data.sleeve_length) document.getElementById('sleeve_length').value = data.sleeve_length + '"';
-            if (data.collar) document.getElementById('collar').value = data.collar + '"';
+            if (data.collar)        document.getElementById('collar').value        = data.collar + '"';
             if (data.shalwar_length) document.getElementById('shalwar_length').value = data.shalwar_length + '"';
             if (data.shalwar_waist) document.getElementById('shalwar_waist').value = data.shalwar_waist + '"';
-            if (data.hip) document.getElementById('hip').value = data.hip + '"';
-            if (data.bottom_width) document.getElementById('bottom_width').value = data.bottom_width + '"';
+            if (data.hip)           document.getElementById('hip').value           = data.hip + '"';
+            if (data.bottom_width)  document.getElementById('bottom_width').value  = data.bottom_width + '"';
             if (data.extra_measurements) document.getElementById('extra_measurements').value = data.extra_measurements;
         });
 }
@@ -215,25 +236,22 @@ function loadSizeMeasurements() {
 function loadCustomerMeasurements() {
     const customerId = document.getElementById('customerSelect').value;
     if (!customerId) return;
-
     fetch(`{% url 'get_customer_measurements' %}?customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.name) document.getElementById('customerName').value = data.name;
+            if (data.name)  document.getElementById('customerName').value  = data.name;
             if (data.phone) document.getElementById('customerPhone').value = data.phone;
-            if (data.size) {
-                document.getElementById('sizeSelect').value = data.size;
-            }
-            if (data.shirt_length) document.getElementById('shirt_length').value = data.shirt_length;
-            if (data.shoulder) document.getElementById('shoulder').value = data.shoulder;
-            if (data.chest) document.getElementById('chest').value = data.chest;
-            if (data.waist) document.getElementById('waist').value = data.waist;
+            if (data.size)  document.getElementById('sizeSelect').value    = data.size;
+            if (data.shirt_length)  document.getElementById('shirt_length').value  = data.shirt_length;
+            if (data.shoulder)      document.getElementById('shoulder').value      = data.shoulder;
+            if (data.chest)         document.getElementById('chest').value         = data.chest;
+            if (data.waist)         document.getElementById('waist').value         = data.waist;
             if (data.sleeve_length) document.getElementById('sleeve_length').value = data.sleeve_length;
-            if (data.collar) document.getElementById('collar').value = data.collar;
+            if (data.collar)        document.getElementById('collar').value        = data.collar;
             if (data.shalwar_length) document.getElementById('shalwar_length').value = data.shalwar_length;
             if (data.shalwar_waist) document.getElementById('shalwar_waist').value = data.shalwar_waist;
-            if (data.hip) document.getElementById('hip').value = data.hip;
-            if (data.bottom_width) document.getElementById('bottom_width').value = data.bottom_width;
+            if (data.hip)           document.getElementById('hip').value           = data.hip;
+            if (data.bottom_width)  document.getElementById('bottom_width').value  = data.bottom_width;
             if (data.extra_measurements) document.getElementById('extra_measurements').value = data.extra_measurements;
         });
 }

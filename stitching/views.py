@@ -86,17 +86,17 @@ def stitching_list(request):
     orders = StitchingOrder.objects.all().order_by('-created_at')
     if search:
         orders = orders.filter(customer_name__icontains=search) | orders.filter(customer_phone__icontains=search)
-    pending = StitchingOrder.objects.filter(status='pending').count()
+    pending     = StitchingOrder.objects.filter(status='pending').count()
     in_progress = StitchingOrder.objects.filter(status='in_progress').count()
-    completed = StitchingOrder.objects.filter(status='completed').count()
-    delivered = StitchingOrder.objects.filter(status='delivered').count()
+    completed   = StitchingOrder.objects.filter(status='completed').count()
+    delivered   = StitchingOrder.objects.filter(status='delivered').count()
     return render(request, 'stitching/stitching_list.html', {
-        'orders': orders,
-        'pending': pending,
+        'orders':      orders,
+        'pending':     pending,
         'in_progress': in_progress,
-        'completed': completed,
-        'delivered': delivered,
-        'search': search,
+        'completed':   completed,
+        'delivered':   delivered,
+        'search':      search,
     })
 
 
@@ -108,12 +108,12 @@ def stitching_detail(request, pk):
 
 @login_required
 def stitching_add(request):
-    products = Product.objects.filter(is_active=True)
+    products  = Product.objects.filter(is_active=True)
     customers = Customer.objects.all().order_by('name')
     if request.method == 'POST':
         customer_id = request.POST.get('customer') or None
-        fabric_id = request.POST.get('fabric') or None
-        fabric_qty = Decimal(str(request.POST.get('fabric_quantity') or 0))
+        fabric_id   = request.POST.get('fabric') or None
+        fabric_qty  = Decimal(str(request.POST.get('fabric_quantity') or 0))
         if fabric_id:
             fabric = Product.objects.get(pk=fabric_id)
             if fabric.stock < fabric_qty:
@@ -122,95 +122,99 @@ def stitching_add(request):
             fabric.stock -= fabric_qty
             fabric.save()
         order = StitchingOrder.objects.create(
-            customer_id=customer_id,
-            customer_name=request.POST.get('customer_name'),
-            customer_phone=request.POST.get('customer_phone') or None,
-            fabric_id=fabric_id,
-            fabric_quantity=fabric_qty,
-            stitching_cost=Decimal(str(request.POST.get('stitching_cost') or 0)),
-            delivery_date=request.POST.get('delivery_date') or None,
-            status=request.POST.get('status'),
-            size=request.POST.get('size') or None,
-            shirt_length=request.POST.get('shirt_length') or None,
-            shoulder=request.POST.get('shoulder') or None,
-            chest=request.POST.get('chest') or None,
-            waist=request.POST.get('waist') or None,
-            sleeve_length=request.POST.get('sleeve_length') or None,
-            collar=request.POST.get('collar') or None,
-            shalwar_length=request.POST.get('shalwar_length') or None,
-            shalwar_waist=request.POST.get('shalwar_waist') or None,
-            hip=request.POST.get('hip') or None,
-            bottom_width=request.POST.get('bottom_width') or None,
-            extra_measurements=request.POST.get('extra_measurements') or None,
-            notes=request.POST.get('notes') or None,
+            customer_id     = customer_id,
+            customer_name   = request.POST.get('customer_name'),
+            customer_phone  = request.POST.get('customer_phone') or None,
+            code_number     = request.POST.get('code_number') or None,
+            fabric_id       = fabric_id,
+            fabric_quantity = fabric_qty,
+            stitching_cost  = Decimal(str(request.POST.get('stitching_cost') or 0)),
+            advance_payment = Decimal(str(request.POST.get('advance_payment') or 0)),
+            delivery_date   = request.POST.get('delivery_date') or None,
+            status          = request.POST.get('status'),
+            size            = request.POST.get('size') or None,
+            shirt_length    = request.POST.get('shirt_length') or None,
+            shoulder        = request.POST.get('shoulder') or None,
+            chest           = request.POST.get('chest') or None,
+            waist           = request.POST.get('waist') or None,
+            sleeve_length   = request.POST.get('sleeve_length') or None,
+            collar          = request.POST.get('collar') or None,
+            shalwar_length  = request.POST.get('shalwar_length') or None,
+            shalwar_waist   = request.POST.get('shalwar_waist') or None,
+            hip             = request.POST.get('hip') or None,
+            bottom_width    = request.POST.get('bottom_width') or None,
+            extra_measurements = request.POST.get('extra_measurements') or None,
+            notes           = request.POST.get('notes') or None,
         )
         if customer_id:
             customer = Customer.objects.get(pk=customer_id)
-            customer.saved_size = request.POST.get('size') or None
-            customer.saved_shirt_length = request.POST.get('shirt_length') or None
-            customer.saved_shoulder = request.POST.get('shoulder') or None
-            customer.saved_chest = request.POST.get('chest') or None
-            customer.saved_waist = request.POST.get('waist') or None
-            customer.saved_sleeve_length = request.POST.get('sleeve_length') or None
-            customer.saved_collar = request.POST.get('collar') or None
-            customer.saved_shalwar_length = request.POST.get('shalwar_length') or None
-            customer.saved_shalwar_waist = request.POST.get('shalwar_waist') or None
-            customer.saved_hip = request.POST.get('hip') or None
-            customer.saved_bottom_width = request.POST.get('bottom_width') or None
+            customer.saved_size             = request.POST.get('size') or None
+            customer.saved_shirt_length     = request.POST.get('shirt_length') or None
+            customer.saved_shoulder         = request.POST.get('shoulder') or None
+            customer.saved_chest            = request.POST.get('chest') or None
+            customer.saved_waist            = request.POST.get('waist') or None
+            customer.saved_sleeve_length    = request.POST.get('sleeve_length') or None
+            customer.saved_collar           = request.POST.get('collar') or None
+            customer.saved_shalwar_length   = request.POST.get('shalwar_length') or None
+            customer.saved_shalwar_waist    = request.POST.get('shalwar_waist') or None
+            customer.saved_hip              = request.POST.get('hip') or None
+            customer.saved_bottom_width     = request.POST.get('bottom_width') or None
             customer.saved_extra_measurements = request.POST.get('extra_measurements') or None
             customer.save()
         messages.success(request, 'Stitching order added successfully.')
-        return redirect('stitching_list')
+        return redirect('stitching_detail', pk=order.pk)
     return render(request, 'stitching/stitching_add.html', {'products': products, 'customers': customers})
 
 
 @login_required
 def stitching_edit(request, pk):
-    order = get_object_or_404(StitchingOrder, pk=pk)
-    products = Product.objects.filter(is_active=True)
+    order     = get_object_or_404(StitchingOrder, pk=pk)
+    products  = Product.objects.filter(is_active=True)
     customers = Customer.objects.all().order_by('name')
     if request.method == 'POST':
-        customer_id = request.POST.get('customer') or None
-        order.customer_id = customer_id
+        customer_id         = request.POST.get('customer') or None
+        order.customer_id   = customer_id
         order.customer_name = request.POST.get('customer_name')
         order.customer_phone = request.POST.get('customer_phone') or None
+        order.code_number   = request.POST.get('code_number') or None
         order.delivery_date = request.POST.get('delivery_date') or None
-        order.status = request.POST.get('status')
-        order.stitching_cost = Decimal(str(request.POST.get('stitching_cost') or 0))
-        order.size = request.POST.get('size') or None
-        order.shirt_length = request.POST.get('shirt_length') or None
-        order.shoulder = request.POST.get('shoulder') or None
-        order.chest = request.POST.get('chest') or None
-        order.waist = request.POST.get('waist') or None
+        order.status        = request.POST.get('status')
+        order.stitching_cost  = Decimal(str(request.POST.get('stitching_cost') or 0))
+        order.advance_payment = Decimal(str(request.POST.get('advance_payment') or 0))
+        order.size          = request.POST.get('size') or None
+        order.shirt_length  = request.POST.get('shirt_length') or None
+        order.shoulder      = request.POST.get('shoulder') or None
+        order.chest         = request.POST.get('chest') or None
+        order.waist         = request.POST.get('waist') or None
         order.sleeve_length = request.POST.get('sleeve_length') or None
-        order.collar = request.POST.get('collar') or None
+        order.collar        = request.POST.get('collar') or None
         order.shalwar_length = request.POST.get('shalwar_length') or None
-        order.shalwar_waist = request.POST.get('shalwar_waist') or None
-        order.hip = request.POST.get('hip') or None
-        order.bottom_width = request.POST.get('bottom_width') or None
+        order.shalwar_waist  = request.POST.get('shalwar_waist') or None
+        order.hip            = request.POST.get('hip') or None
+        order.bottom_width   = request.POST.get('bottom_width') or None
         order.extra_measurements = request.POST.get('extra_measurements') or None
-        order.notes = request.POST.get('notes') or None
+        order.notes          = request.POST.get('notes') or None
         order.save()
         if customer_id:
             customer = Customer.objects.get(pk=customer_id)
-            customer.saved_size = request.POST.get('size') or None
-            customer.saved_shirt_length = request.POST.get('shirt_length') or None
-            customer.saved_shoulder = request.POST.get('shoulder') or None
-            customer.saved_chest = request.POST.get('chest') or None
-            customer.saved_waist = request.POST.get('waist') or None
-            customer.saved_sleeve_length = request.POST.get('sleeve_length') or None
-            customer.saved_collar = request.POST.get('collar') or None
-            customer.saved_shalwar_length = request.POST.get('shalwar_length') or None
-            customer.saved_shalwar_waist = request.POST.get('shalwar_waist') or None
-            customer.saved_hip = request.POST.get('hip') or None
-            customer.saved_bottom_width = request.POST.get('bottom_width') or None
+            customer.saved_size             = request.POST.get('size') or None
+            customer.saved_shirt_length     = request.POST.get('shirt_length') or None
+            customer.saved_shoulder         = request.POST.get('shoulder') or None
+            customer.saved_chest            = request.POST.get('chest') or None
+            customer.saved_waist            = request.POST.get('waist') or None
+            customer.saved_sleeve_length    = request.POST.get('sleeve_length') or None
+            customer.saved_collar           = request.POST.get('collar') or None
+            customer.saved_shalwar_length   = request.POST.get('shalwar_length') or None
+            customer.saved_shalwar_waist    = request.POST.get('shalwar_waist') or None
+            customer.saved_hip              = request.POST.get('hip') or None
+            customer.saved_bottom_width     = request.POST.get('bottom_width') or None
             customer.saved_extra_measurements = request.POST.get('extra_measurements') or None
             customer.save()
         messages.success(request, 'Stitching order updated successfully.')
-        return redirect('stitching_list')
+        return redirect('stitching_detail', pk=order.pk)
     return render(request, 'stitching/stitching_edit.html', {
-        'order': order,
-        'products': products,
+        'order':     order,
+        'products':  products,
         'customers': customers,
     })
 

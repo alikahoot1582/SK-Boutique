@@ -28,10 +28,10 @@
                     <td><strong>{{ cat.name }}</strong></td>
                     <td>{{ cat.created_at|date:"d M Y" }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-outline-danger"
-                           onclick="globalConfirmDelete('{% url 'category_delete' cat.pk %}', '{{ cat.name }}')">
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                onclick="confirmDelete('{% url 'category_delete' cat.pk %}', '{{ cat.name }}')">
                             <i class="bi bi-trash"></i>
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 {% empty %}
@@ -41,4 +41,66 @@
         </table>
     </div>
 </div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteCatModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title text-danger">
+                    <i class="bi bi-lock-fill me-2"></i>Admin Password Required
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">Enter admin password to delete.</p>
+                <input type="password" id="deleteCatPassword" class="form-control" placeholder="Enter password...">
+                <div id="deleteCatError" class="text-danger small mt-2" style="display:none;">Incorrect password!</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="submitDelete()">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let deleteUrl = '';
+
+function confirmDelete(url, name) {
+    deleteUrl = url;
+    document.getElementById('deleteCatPassword').value = '';
+    document.getElementById('deleteCatError').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('deleteCatModal')).show();
+}
+
+function submitDelete() {
+    const pwd = document.getElementById('deleteCatPassword').value;
+    if (pwd !== 'boutique123') {
+        document.getElementById('deleteCatError').style.display = 'block';
+        return;
+    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = deleteUrl;
+    const csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = 'csrfmiddlewaretoken';
+    csrf.value = '{{ csrf_token }}';
+    const pwd_field = document.createElement('input');
+    pwd_field.type = 'hidden';
+    pwd_field.name = 'delete_password';
+    pwd_field.value = pwd;
+    form.appendChild(csrf);
+    form.appendChild(pwd_field);
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
 {% endblock %}

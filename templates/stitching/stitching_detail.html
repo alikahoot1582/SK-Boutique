@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block page_title %}Order Detail{% endblock %}
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
     <h5 class="fw-bold mb-0"><i class="bi bi-scissors me-2 text-primary"></i>Order #{{ order.pk }} — {{ order.customer_name }}</h5>
     <div class="d-flex gap-2">
+        <button onclick="printInvoice()" class="btn btn-success btn-sm">
+            <i class="bi bi-printer me-1"></i> Print Invoice
+        </button>
         <a href="{% url 'stitching_edit' order.pk %}" class="btn btn-sm btn-outline-primary">
             <i class="bi bi-pencil me-1"></i> Edit
         </a>
@@ -14,8 +18,13 @@
     </div>
 </div>
 
+<style>
+    .no-print { display: block; }
+    @media print { .no-print { display: none !important; } }
+</style>
+
 <!-- Customer & Order Info -->
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-4 no-print">
     <div class="col-md-6">
         <div class="content-card">
             <div class="card-header-custom">
@@ -25,9 +34,12 @@
                 <table class="table table-borderless mb-0">
                     <tr><td class="text-muted">Name:</td><td><strong>{{ order.customer_name }}</strong></td></tr>
                     <tr><td class="text-muted">Phone:</td><td>{{ order.customer_phone|default:"-" }}</td></tr>
+                    <tr><td class="text-muted">Code No:</td><td><strong>{{ order.code_number|default:"-" }}</strong></td></tr>
                     <tr><td class="text-muted">Fabric:</td><td>{{ order.fabric.name|default:"-" }}</td></tr>
                     <tr><td class="text-muted">Qty Used:</td><td>{{ order.fabric_quantity }}</td></tr>
-                    <tr><td class="text-muted">Cost:</td><td><strong>Rs. {{ order.stitching_cost|floatformat:2 }}</strong></td></tr>
+                    <tr><td class="text-muted">Stitching Cost:</td><td><strong>Rs. {{ order.stitching_cost|floatformat:0 }}</strong></td></tr>
+                    <tr><td class="text-muted">Cash Received:</td><td><strong class="text-primary">Rs. {{ order.advance_payment|floatformat:0 }}</strong></td></tr>
+                    <tr><td class="text-muted">Remaining:</td><td><strong class="text-danger">Rs. {{ order.balance|floatformat:0 }}</strong></td></tr>
                 </table>
             </div>
         </div>
@@ -59,7 +71,7 @@
 </div>
 
 <!-- Measurements -->
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-4 no-print">
     <div class="col-md-6">
         <div class="content-card">
             <div class="card-header-custom">
@@ -99,7 +111,7 @@
 </div>
 
 {% if order.extra_measurements %}
-<div class="content-card mb-4">
+<div class="content-card mb-4 no-print">
     <div class="card-header-custom">
         <h6 style="color:#2ecc71;"><i class="bi bi-plus-circle me-2"></i>Other Measurements</h6>
     </div>
@@ -109,4 +121,141 @@
 </div>
 {% endif %}
 
+<!-- PRINT AREA — no measurements -->
+<div id="printArea" style="display:none;">
+<style>
+    @media print {
+        @page { margin: 0; size: 80mm auto; }
+        body * { visibility: hidden; }
+        #printArea, #printArea * { visibility: visible; }
+        #printArea {
+            display: block !important;
+            position: fixed;
+            top: 0; left: 0;
+            width: 80mm;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #000;
+            padding: 4mm;
+            background: #fff;
+        }
+    }
+    #printArea {
+        width: 80mm;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        color: #000;
+    }
+    .p-center    { text-align: center; }
+    .p-bold      { font-weight: bold; }
+    .p-line      { border-top: 1px dashed #000; margin: 5px 0; }
+    .p-double    { border-top: 3px double #000; margin: 5px 0; }
+    .p-table     { width: 100%; border-collapse: collapse; }
+    .p-table td  { padding: 3px 2px; vertical-align: top; font-size: 11px; }
+    .p-right     { text-align: right; }
+    .p-phone-box  { border: 1px solid #000; text-align: center; padding: 3px 6px; margin: 5px 0; font-size: 11px; }
+    .p-footer-box { border: 1px solid #000; text-align: center; padding: 5px; margin-top: 8px; font-size: 10px; }
+    .p-logo      { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; }
+</style>
+
+    <div class="p-center" style="margin-bottom:4px;">
+        <img src="{% static 'images/logo.jpeg' %}" class="p-logo" alt="Logo">
+    </div>
+
+    <div class="p-center">
+        <div class="p-bold" style="font-size:16px;">GS Boutique</div>
+        <div style="font-size:11px;">Premium Fabrics & Experts Stitching</div>
+        <div style="font-size:10px;">Opp. Dare Arqam School (New Campus)</div>
+        <div style="font-size:10px;">Talagang Road, Chakwal</div>
+    </div>
+
+    <div class="p-phone-box">Ph: 0370-6595870</div>
+
+    <div class="p-center p-bold" style="font-size:13px; margin:4px 0;">
+        STITCHING ORDER
+    </div>
+
+    <table class="p-table" style="margin-top:4px;">
+        <tr>
+            <td>Order No:</td>
+            <td class="p-right"><strong>#{{ order.pk }}</strong></td>
+        </tr>
+        {% if order.code_number %}
+        <tr>
+            <td>Code No:</td>
+            <td class="p-right"><strong>{{ order.code_number }}</strong></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Date:</td>
+            <td class="p-right">{{ order.order_date|date:"d M, Y" }}</td>
+        </tr>
+        {% if order.delivery_date %}
+        <tr>
+            <td>Delivery:</td>
+            <td class="p-right">{{ order.delivery_date|date:"d M, Y" }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Customer:</td>
+            <td class="p-right">{{ order.customer_name }}</td>
+        </tr>
+        {% if order.customer_phone %}
+        <tr>
+            <td>Phone:</td>
+            <td class="p-right">{{ order.customer_phone }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Size:</td>
+            <td class="p-right">{{ order.size|default:"Custom" }}</td>
+        </tr>
+        <tr>
+            <td>Status:</td>
+            <td class="p-right">{{ order.get_status_display }}</td>
+        </tr>
+    </table>
+
+    <div class="p-line"></div>
+
+    <table class="p-table">
+        <tr>
+            <td>Stitching Cost:</td>
+            <td class="p-right">Rs. {{ order.stitching_cost|floatformat:0 }}</td>
+        </tr>
+        <tr>
+            <td>Cash Received:</td>
+            <td class="p-right">Rs. {{ order.advance_payment|floatformat:0 }}</td>
+        </tr>
+        <tr>
+            <td class="p-bold">Remaining:</td>
+            <td class="p-right p-bold">Rs. {{ order.balance|floatformat:0 }}</td>
+        </tr>
+    </table>
+
+    <div class="p-double"></div>
+
+    {% if order.notes %}
+    <div style="font-size:10px; margin-bottom:5px;">
+        <strong>Note:</strong> {{ order.notes }}
+    </div>
+    {% endif %}
+
+    <div class="p-footer-box">
+        <div>No return or exchange without this receipt.</div>
+        <div class="p-bold" style="font-size:13px;">THANKS FOR YOUR ORDER</div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function printInvoice() {
+    document.getElementById('printArea').style.display = 'block';
+    window.print();
+    document.getElementById('printArea').style.display = 'none';
+}
+</script>
 {% endblock %}

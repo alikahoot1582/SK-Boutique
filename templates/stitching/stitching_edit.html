@@ -4,7 +4,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="fw-bold mb-0"><i class="bi bi-pencil me-2 text-primary"></i>Edit Stitching Order</h5>
-    <a href="{% url 'stitching_list' %}" class="btn btn-sm btn-outline-secondary">
+    <a href="{% url 'stitching_detail' order.pk %}" class="btn btn-sm btn-outline-secondary">
         <i class="bi bi-arrow-left me-1"></i> Back
     </a>
 </div>
@@ -41,14 +41,29 @@
                        value="{{ order.customer_phone|default:'' }}">
             </div>
             <div class="col-md-6">
+                <label class="form-label fw-semibold">Code Number</label>
+                <input type="text" name="code_number" class="form-control"
+                       value="{{ order.code_number|default:'' }}" placeholder="e.g. A-101">
+            </div>
+            <div class="col-md-6">
                 <label class="form-label fw-semibold">Fabric</label>
                 <input type="text" class="form-control"
                        value="{{ order.fabric.name|default:'No fabric selected' }}" disabled>
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Stitching Cost (Rs.)</label>
-                <input type="number" name="stitching_cost" class="form-control"
-                       value="{{ order.stitching_cost }}" step="0.01" min="0">
+                <input type="number" name="stitching_cost" id="stitchingCost" class="form-control"
+                       value="{{ order.stitching_cost|floatformat:0 }}" step="1" min="0" oninput="updateBalance()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Cash Received (Rs.)</label>
+                <input type="number" name="advance_payment" id="advancePayment" class="form-control"
+                       value="{{ order.advance_payment|floatformat:0 }}" step="1" min="0" oninput="updateBalance()">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Remaining Balance (Rs.)</label>
+                <input type="text" id="remainingBalance" class="form-control bg-light fw-bold text-danger" readonly
+                       value="{{ order.balance|floatformat:0 }}">
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Delivery Date</label>
@@ -108,33 +123,27 @@
         <div class="row g-3 mb-4">
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Shirt Length</label>
-                <input type="text" name="shirt_length" id="shirt_length" class="form-control"
-                       value="{{ order.shirt_length|default:'' }}">
+                <input type="text" name="shirt_length" id="shirt_length" class="form-control" value="{{ order.shirt_length|default:'' }}">
             </div>
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Shoulder</label>
-                <input type="text" name="shoulder" id="shoulder" class="form-control"
-                       value="{{ order.shoulder|default:'' }}">
+                <input type="text" name="shoulder" id="shoulder" class="form-control" value="{{ order.shoulder|default:'' }}">
             </div>
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Chest</label>
-                <input type="text" name="chest" id="chest" class="form-control"
-                       value="{{ order.chest|default:'' }}">
+                <input type="text" name="chest" id="chest" class="form-control" value="{{ order.chest|default:'' }}">
             </div>
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Waist</label>
-                <input type="text" name="waist" id="waist" class="form-control"
-                       value="{{ order.waist|default:'' }}">
+                <input type="text" name="waist" id="waist" class="form-control" value="{{ order.waist|default:'' }}">
             </div>
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Sleeve Length</label>
-                <input type="text" name="sleeve_length" id="sleeve_length" class="form-control"
-                       value="{{ order.sleeve_length|default:'' }}">
+                <input type="text" name="sleeve_length" id="sleeve_length" class="form-control" value="{{ order.sleeve_length|default:'' }}">
             </div>
             <div class="col-md-4 col-6">
                 <label class="form-label fw-semibold">Collar</label>
-                <input type="text" name="collar" id="collar" class="form-control"
-                       value="{{ order.collar|default:'' }}">
+                <input type="text" name="collar" id="collar" class="form-control" value="{{ order.collar|default:'' }}">
             </div>
         </div>
 
@@ -143,30 +152,25 @@
         <div class="row g-3 mb-4">
             <div class="col-md-3 col-6">
                 <label class="form-label fw-semibold">Shalwar Length</label>
-                <input type="text" name="shalwar_length" id="shalwar_length" class="form-control"
-                       value="{{ order.shalwar_length|default:'' }}">
+                <input type="text" name="shalwar_length" id="shalwar_length" class="form-control" value="{{ order.shalwar_length|default:'' }}">
             </div>
             <div class="col-md-3 col-6">
                 <label class="form-label fw-semibold">Shalwar Waist</label>
-                <input type="text" name="shalwar_waist" id="shalwar_waist" class="form-control"
-                       value="{{ order.shalwar_waist|default:'' }}">
+                <input type="text" name="shalwar_waist" id="shalwar_waist" class="form-control" value="{{ order.shalwar_waist|default:'' }}">
             </div>
             <div class="col-md-3 col-6">
                 <label class="form-label fw-semibold">Hip</label>
-                <input type="text" name="hip" id="hip" class="form-control"
-                       value="{{ order.hip|default:'' }}">
+                <input type="text" name="hip" id="hip" class="form-control" value="{{ order.hip|default:'' }}">
             </div>
             <div class="col-md-3 col-6">
                 <label class="form-label fw-semibold">Bottom Width</label>
-                <input type="text" name="bottom_width" id="bottom_width" class="form-control"
-                       value="{{ order.bottom_width|default:'' }}">
+                <input type="text" name="bottom_width" id="bottom_width" class="form-control" value="{{ order.bottom_width|default:'' }}">
             </div>
         </div>
 
         <!-- Extra -->
         <h6 class="fw-bold mb-3" style="color:#2ecc71;"><i class="bi bi-plus-circle me-2"></i>Other Measurements / Notes</h6>
-        <textarea name="extra_measurements" id="extra_measurements" class="form-control" rows="3"
-                  placeholder="Add any extra measurements...">{{ order.extra_measurements|default:'' }}</textarea>
+        <textarea name="extra_measurements" id="extra_measurements" class="form-control" rows="3">{{ order.extra_measurements|default:'' }}</textarea>
     </div>
 </div>
 
@@ -178,23 +182,11 @@
     </div>
 </div>
 
-<!-- Admin Password -->
-<div class="content-card mb-4">
-    <div class="card-body p-4">
-        <label class="form-label fw-semibold text-danger">
-            <i class="bi bi-lock-fill me-1"></i> Admin Password *
-        </label>
-        <input type="password" name="edit_password" class="form-control"
-               style="max-width:300px;"
-               placeholder="Enter admin password to save changes" required>
-    </div>
-</div>
-
 <div class="d-flex gap-3">
     <button type="submit" class="btn-primary-custom btn">
         <i class="bi bi-check-lg me-1"></i> Update Order
     </button>
-    <a href="{% url 'stitching_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    <a href="{% url 'stitching_detail' order.pk %}" class="btn btn-outline-secondary">Cancel</a>
 </div>
 
 </form>
@@ -203,23 +195,34 @@
 
 {% block extra_js %}
 <script>
+function updateBalance() {
+    const cost    = parseFloat(document.getElementById('stitchingCost').value || 0);
+    const advance = parseFloat(document.getElementById('advancePayment').value || 0);
+    const balance = cost - advance;
+    const el      = document.getElementById('remainingBalance');
+    el.value      = balance;
+    el.className  = balance > 0
+        ? 'form-control bg-light fw-bold text-danger'
+        : 'form-control bg-light fw-bold text-success';
+}
+
 function loadSizeMeasurements() {
-    const size = document.getElementById('sizeSelect').value;
+    const size       = document.getElementById('sizeSelect').value;
     const customerId = document.getElementById('customerSelect').value;
     if (!size) return;
     fetch(`{% url 'get_size_measurements' %}?size=${size}&customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.shirt_length) document.getElementById('shirt_length').value = data.shirt_length + '"';
-            if (data.shoulder) document.getElementById('shoulder').value = data.shoulder + '"';
-            if (data.chest) document.getElementById('chest').value = data.chest + '"';
-            if (data.waist) document.getElementById('waist').value = data.waist + '"';
+            if (data.shirt_length)  document.getElementById('shirt_length').value  = data.shirt_length + '"';
+            if (data.shoulder)      document.getElementById('shoulder').value      = data.shoulder + '"';
+            if (data.chest)         document.getElementById('chest').value         = data.chest + '"';
+            if (data.waist)         document.getElementById('waist').value         = data.waist + '"';
             if (data.sleeve_length) document.getElementById('sleeve_length').value = data.sleeve_length + '"';
-            if (data.collar) document.getElementById('collar').value = data.collar + '"';
+            if (data.collar)        document.getElementById('collar').value        = data.collar + '"';
             if (data.shalwar_length) document.getElementById('shalwar_length').value = data.shalwar_length + '"';
             if (data.shalwar_waist) document.getElementById('shalwar_waist').value = data.shalwar_waist + '"';
-            if (data.hip) document.getElementById('hip').value = data.hip + '"';
-            if (data.bottom_width) document.getElementById('bottom_width').value = data.bottom_width + '"';
+            if (data.hip)           document.getElementById('hip').value           = data.hip + '"';
+            if (data.bottom_width)  document.getElementById('bottom_width').value  = data.bottom_width + '"';
         });
 }
 
@@ -229,19 +232,19 @@ function loadCustomerMeasurements() {
     fetch(`{% url 'get_customer_measurements' %}?customer_id=${customerId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.name) document.getElementById('customerName').value = data.name;
+            if (data.name)  document.getElementById('customerName').value  = data.name;
             if (data.phone) document.getElementById('customerPhone').value = data.phone;
-            if (data.size) document.getElementById('sizeSelect').value = data.size;
-            if (data.shirt_length) document.getElementById('shirt_length').value = data.shirt_length;
-            if (data.shoulder) document.getElementById('shoulder').value = data.shoulder;
-            if (data.chest) document.getElementById('chest').value = data.chest;
-            if (data.waist) document.getElementById('waist').value = data.waist;
+            if (data.size)  document.getElementById('sizeSelect').value    = data.size;
+            if (data.shirt_length)  document.getElementById('shirt_length').value  = data.shirt_length;
+            if (data.shoulder)      document.getElementById('shoulder').value      = data.shoulder;
+            if (data.chest)         document.getElementById('chest').value         = data.chest;
+            if (data.waist)         document.getElementById('waist').value         = data.waist;
             if (data.sleeve_length) document.getElementById('sleeve_length').value = data.sleeve_length;
-            if (data.collar) document.getElementById('collar').value = data.collar;
+            if (data.collar)        document.getElementById('collar').value        = data.collar;
             if (data.shalwar_length) document.getElementById('shalwar_length').value = data.shalwar_length;
             if (data.shalwar_waist) document.getElementById('shalwar_waist').value = data.shalwar_waist;
-            if (data.hip) document.getElementById('hip').value = data.hip;
-            if (data.bottom_width) document.getElementById('bottom_width').value = data.bottom_width;
+            if (data.hip)           document.getElementById('hip').value           = data.hip;
+            if (data.bottom_width)  document.getElementById('bottom_width').value  = data.bottom_width;
             if (data.extra_measurements) document.getElementById('extra_measurements').value = data.extra_measurements;
         });
 }
