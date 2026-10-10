@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import shutil
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,12 +86,25 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.path.exists('/var/task'):
+    db_path = os.path.join('/tmp', 'db.sqlite3')
+    if not os.path.exists(db_path):
+        original_db = os.path.join(BASE_DIR, 'db.sqlite3')
+        if os.path.exists(original_db):
+            shutil.copy(original_db, db_path)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': db_path,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -115,12 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Karachi'
-USE_TZ = True
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -144,7 +155,7 @@ JAZZMIN_SETTINGS = {
     "site_header": "Boutique Management",
     "site_brand": "Boutique",
     "welcome_sign": "Welcome to Boutique Management System",
-    "copyright": "Developed by Rabia Muneeb",
+    "copyright": "Boutique Management System",
     "show_sidebar": True,
     "navigation_expanded": True,
     "icons": {
