@@ -58,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-if os.path.exists('/var/task'):
+if os.path.exists('/tmp'):
     db_path = os.path.join('/tmp', 'db.sqlite3')
     if not os.path.exists(db_path):
         original_db = os.path.join(BASE_DIR, 'db.sqlite3')
